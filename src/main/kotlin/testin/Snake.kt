@@ -32,7 +32,7 @@ class Board(
 
     private val sizeX: Int = width / SCALE
     private val sizeY = height / SCALE
-    private lateinit var drawingFunction: (Graphics, Int, Int, Color) -> Unit
+    private  var drawingFunction: (Graphics, Int, Int, Color) -> Unit
 
     //Snake
     private val snake: Snake = Snake(apple = Apple(5, 5, sizeX, sizeY))
@@ -245,6 +245,8 @@ class Board(
     private fun endGame() {
         println("Game over")
         timer?.stop()
+        val topFrame = SwingUtilities.getWindowAncestor(this) as JFrame
+        topFrame.dispose()
     }
 
 
@@ -257,16 +259,35 @@ class MainFrame(
     delay: Int = 5
 ) : JFrame() {
 
+    var graphicsProxy: Int = 0
     init {
         val mainPanel = JPanel()
         val playButton = JButton("Play")
-        val settingsButton = JButton("Settings")
+        val setToCircles = JButton("Set graphics to circles!")
+        val setToSquares = JButton("Set graphics to squares!")
+        val setToImages = JButton("Set graphics to images!")
+
+
 
         val box = Box.createVerticalBox()
 
         box.add(playButton)
 
-        box.add(settingsButton)
+        box.add(setToCircles)
+        box.add(setToSquares)
+        box.add(setToImages)
+
+        setToCircles.addActionListener {
+            graphicsProxy = 0
+        }
+
+        setToSquares.addActionListener {
+            graphicsProxy = 1
+        }
+
+        setToImages.addActionListener {
+            graphicsProxy = 2
+        }
 
         mainPanel.add(box)
 
@@ -278,8 +299,8 @@ class MainFrame(
 
         playButton.addActionListener {
             mainPanel.isVisible = false
-            playButton.isVisible = false
-            gamePanel = Board(width, height, SCALE, drawingFuntionProxy = 3, delay = delay)
+            //playButton.isVisible = false
+            gamePanel = Board(width, height, SCALE, drawingFuntionProxy = graphicsProxy, delay = delay)
             add(gamePanel)
             gamePanel.requestFocusInWindow()
             gamePanel.isVisible = true
@@ -304,7 +325,7 @@ class MainFrame(
 fun main() {
 
     EventQueue.invokeLater {
-        val ex = MainFrame(750, 750, 20, 150)
+        val ex = MainFrame(750, 750, 20, 200)
         ex.isVisible = true
     }
 }
